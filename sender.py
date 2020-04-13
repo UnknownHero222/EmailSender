@@ -29,7 +29,8 @@ class EmailSender:
 
             server.close()
         except Exception as err:
-            print("Error! Sending the message to an email failed. Error: {}".format(err))
+            print("Sending the message to an email failed!")
+            print("Error: {}".format(err))
 
     def _generate_email(self, email_data):
         email_message = MIMEMultipart("multipart")
