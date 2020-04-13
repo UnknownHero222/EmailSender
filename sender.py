@@ -1,16 +1,16 @@
+import sys
+import smtplib
+import argparse
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-import smtplib
 
 
 class EmailSender:
-    def __init__(self, sender_address, password, receiver_address):
+    def __init__(self, sender_address, password, receiver_address, smtp_server):
         self._sender_address = sender_address
         self._receiver_address = receiver_address
         self._password = password
-
-        # TODO the moment with the server needs to be thought over more carefully
-        self._smtp_server = 'smtp.gmail.com'
+        self._smtp_server = smtp_server
 
     def send_email(self, subject, text):
         email = self._generate_email(subject, text)
@@ -38,5 +38,18 @@ class EmailSender:
         return email_message
 
 
+def get_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-s", "--sender", help="e-mail address of the sender")
+    parser.add_argument("-p", "--password", help="password for the sender's email account")
+    parser.add_argument("-r", "--receiver", help="e-mail address of the recipient")
+    parser.add_argument("--smtp", help="address of the SMTP server")
+
+    return parser
+
+
 if __name__ == '__main__':
-    sender = EmailSender("Sender_test@address", "test_password", "Test@address")
+    parser = get_parser()
+    namespace = parser.parse_args(sys.argv[1:])
+
+    sender = EmailSender(namespace.sender, namespace.password, namespace.receiver, namespace.smtp)
