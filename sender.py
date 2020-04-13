@@ -1,8 +1,13 @@
 import sys
 import smtplib
 import argparse
+import os
+import tempfile
+import shutil
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.image import MIMEImage
+from email.mime.application import MIMEApplication
 
 
 class EmailSender:
@@ -35,6 +40,21 @@ class EmailSender:
         msg_body = MIMEText(email_data["text"])
         email_message.attach(msg_body)
 
+        for attached_image in email["images"]:
+            with open(attached_image, "rb") as file:
+                image = MIMEImage(file.read(), name="image{}.jpg".format(image["images"].index(attached_image)))
+                email_message.attach(image)
+
+            shutil.rmtree(os.path.dirname(attached_image))
+
+        for attachment in email["attachments"]:
+            with open(attachment, "rb") as file:
+                curr_attachment = MIMEApplication(file.read())
+                curr_attachment.add_header('Content-Disposition', 'attachment', filename=os.path.basename(doc))
+                email_message.attach(curr_attachment)
+
+            shutil.rmtree(os.path.dirname(attachment))
+
         return email_message
 
 
@@ -53,5 +73,5 @@ if __name__ == '__main__':
     namespace = parser.parse_args(sys.argv[1:])
 
     sender = EmailSender(namespace.sender, namespace.password, namespace.receiver, namespace.smtp)
-    email = {"subject": "Simple e-mail", "text": "Simple text in e-mail body"}
+    email = {"subject": "Simple e-mail", "text": "Simple text in e-mail body", "images": [], "attachments": []}
     sender.send_email(email)
