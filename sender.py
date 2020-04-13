@@ -12,8 +12,8 @@ class EmailSender:
         self._password = password
         self._smtp_server = smtp_server
 
-    def send_email(self, subject, text):
-        email = self._generate_email(subject, text)
+    def send_email(self, email_data):
+        email = self._generate_email(email_data)
 
         try:
             server = smtplib.SMTP_SSL(self._smtp_server, 465)
@@ -26,13 +26,13 @@ class EmailSender:
         except Exception as err:
             print("Error! Sending the message to an email failed. Error: {}".format(err))
 
-    def _generate_email(self, email_subject, email_text):
+    def _generate_email(self, email_data):
         email_message = MIMEMultipart("multipart")
         email_message["From"] = self._sender_address
         email_message["To"] = self._receiver_address
-        email_message["Subject"] = email_subject
+        email_message["Subject"] = email_data["subject"]
 
-        msg_body = MIMEText(email_text)
+        msg_body = MIMEText(email_data["text"])
         email_message.attach(msg_body)
 
         return email_message
@@ -53,3 +53,5 @@ if __name__ == '__main__':
     namespace = parser.parse_args(sys.argv[1:])
 
     sender = EmailSender(namespace.sender, namespace.password, namespace.receiver, namespace.smtp)
+    email = {"subject": "Simple e-mail", "text": "Simple text in e-mail body"}
+    sender.send_email(email)
