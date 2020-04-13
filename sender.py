@@ -39,13 +39,13 @@ class EmailSender:
 
 
 def get_parser():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-s", "--sender", help="e-mail address of the sender")
-    parser.add_argument("-p", "--password", help="password for the sender's email account")
-    parser.add_argument("-r", "--receiver", help="e-mail address of the recipient")
-    parser.add_argument("--smtp", help="address of the SMTP server")
+    args_parser = argparse.ArgumentParser()
+    args_parser.add_argument("-s", "--sender", help="e-mail address of the sender")
+    args_parser.add_argument("-p", "--password", help="password for the sender's email account")
+    args_parser.add_argument("-r", "--receiver", help="e-mail address of the recipient")
+    args_parser.add_argument("--smtp", help="address of the SMTP server")
 
-    return parser
+    return args_parser
 
 
 if __name__ == '__main__':
